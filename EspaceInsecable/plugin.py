@@ -10,7 +10,7 @@ def run(bk):
 	# iterate over all html files
 	for html_id, href in bk.text_iter():
 		
-		print("Fichier en cour de traitement : " + os.path.basename(href));
+		print("Fichier en cour de traitement : " + os.path.basename(href));
 		# read orignal html code from file
 		text = bk.readfile(html_id);
 		
@@ -59,7 +59,8 @@ def Traitement(text):
 	body = RegexLoop(r"<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)—((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:&#160;|\s){2,}", r"<p\1>—&#160;\2\3", body);
 	# supprime les espace en doubles mal placé
 	body = RegexLoop(r"<p(| [^>]*)>—&#160;((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:&#160;|\s){1,}", r"<p\1>—&#160;\2", body);
-	
+		
+		
 	# remplace les apostrophes droit dans le texte
 	body = RegexLoop(r">([^<]*)'([^<]*)<", r">\1’\2<", body);
 	# les espaces devant et derriére les apostrophes
@@ -70,6 +71,10 @@ def Traitement(text):
 	body = RegexSimple(r"«(&#160;|\s)*", r"«&#160;", body);
 	# met l'espace insécable pour les quillement ouvrant et supprime les espace en doubles
 	body = RegexSimple(r"(&#160;|\s)*»", r"&#160;»", body);
+	
+	# supprime les espace en doubles mal placé
+	body = RegexSimple(r"<p(| [^>]*)>(?:&#160;|\s){0,}»(?:&#160;|\s){0,}", r"<p\1>»&#160;", body);
+	
 	
 	# met l'espace insécable pour les point d'exclamation et supprime les espace en doubles
 	body = RegexSimple(r"(&#160;|\s)*!", r"&#160;!", body);
