@@ -49,10 +49,12 @@ def Traitement(text):
 	text = RegexLoop(r"\s*xmlns:w=\"urn:schemas-microsoft-com:office:word\"", "", text);
 	text = RegexLoop(r"\s*xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"", "", text);
 	
-	text = RegexLoop(r"\s*(v|o|w|m):[^=>]*=\"[^\">]*\"", "", text);
+	text = RegexLoop(r"\s(v|o|w|m):[^=>]*=\"[^\">]*\"", "", text);
 	
-	text = RegexLoop(r"\s*<!--\[if[^\]>]*\]>.*?<!\[endif\]-->", "", text);
-	text = RegexLoop(r"\s*<!--\[if !vml\]-->", "", text);
+	text = RegexLoop(r"\s*<!--\s*\[if[^\]>]*\]>.*?<!\[endif\]\s*-->", "", text);
+	text = RegexLoop(r"\s*<!--\s*\[if !(vml|supportAnnotations)\]\s*-->", "", text);
+	
+	text = RegexLoop(r"\s(vlink|link)=\"[^\">]*\"", "", text);
 	
 	text = RegexLoop(r"\s*<meta( (content=\"Word.Document\"|name=\"ProgId\")){2}/>", "", text);
 	

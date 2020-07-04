@@ -11,6 +11,11 @@ reFlag = re.ASCII + re.MULTILINE + re.DOTALL;
 
 def CleanBasic(text):
 	
+	text = RegexLoop(r"(&#x202F;|&#8239;)", "\u202F", text);
+	text = RegexLoop(r"&#xA0;", "&#160;", text);
+	text = RegexLoop("\u00A0", "&#160;", text);
+	
+	
 	if ("><p" or "><blockquote") in text :
 		text = RegexLoop(r"><(p|div|h\d|li|ul|ol|blockquote)", r">\n<\1", text);
 		
@@ -61,6 +66,15 @@ def CleanBasic(text):
 	text = RegexLoop(r"(<(p|h\d)(?:| [^>]*)>(?:.(?!</\2>))*?)(\t|( ){2,})", r"\1 ", text);
 	# tab pour l'indentation
 	text = RegexLoop(r"^( *)\t(\s*<)", r"\1  \2", text);
+	
+	#strip span
+	text = RegexLoop(r"<span\s*>([^<]*)</span>", r"\1", text);
+	
+	# remplace les triple point invalide
+	text = RegexSimple(r"\.\s*\.\s*\.", r"…", text);
+	
+	# remplace les triple point invalide
+	text = RegexLoop(r"<a class=""footnotecall"" id=""bodyftn(\d+)"" href=""#ftn\1"">\1</a>", r"<a class=""footnotecall"" id=""bodyftn\1"" href=""#ftn\1"">[\1]</a>", text);
 	
 	return text;
 

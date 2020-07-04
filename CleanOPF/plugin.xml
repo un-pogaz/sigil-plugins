@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+<name>CleanOPF</name>
+<type>edit</type>
+<author>rubeus</author>
+<description>Cleans he OPF File</description>
+<engine>python2.7</engine>
+<version>0.1.0</version>
+<oslist>osx,unx,win</oslist>
+</plugin>
