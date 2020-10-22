@@ -52,7 +52,7 @@ def Traitement(text):
 	text = RegexLoop(r"\s(v|o|w|m):[^=>]*=\"[^\">]*\"", "", text);
 	
 	text = RegexLoop(r"\s*<!--\s*\[if[^\]>]*\]>.*?<!\[endif\]\s*-->", "", text);
-	text = RegexLoop(r"\s*<!--\s*\[if !(vml|supportAnnotations)\]\s*-->", "", text);
+	text = RegexLoop(r"\s*<!--\s*\[if !(vml|supportAnnotations|supportLineBreakNewLine|supportFootnotes)\]\s*-->", "", text);
 	
 	text = RegexLoop(r"\s(vlink|link)=\"[^\">]*\"", "", text);
 	
