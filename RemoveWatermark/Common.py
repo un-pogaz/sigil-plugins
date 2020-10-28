@@ -25,7 +25,6 @@ def RegexLoop(pattern, repl, string):
 
 def CleanBasic(text):
 	
-	
 	text = RegexLoop(r'\s+</(p|h\d)', r'</\1', text);
 	text = RegexLoop(r"><(p|div|h\d|li|ul|ol|blockquote)", r">\n<\1", text);
 	
@@ -103,34 +102,35 @@ def CleanBasic(text):
 
 def parseXMLentity(text):
 	
-	#		" & ' < >
+	#	" & ' < >
 	regx = r'&#x(0022|0026|0027|003C|003E);';
 	while RegexSearch(regx, text):
 		m = RegexSearch(regx, text).group(1);
 		text = text.replace('&#x'+m+';', '&#'+str(int(m, base=16))+';')
 	
+	#	&#38; => &amp;
 	for c, h, d in entitysHtmlBase() + entitysHtmlQuot() + entitysHtmlApos():
 		text = text.replace(d, h);
 		#debug_print(h, d, c);
-		#&Agrave; &#192; À
+		# &amp; &#38; &
 	
-	
+	#	&Agrave; &#192; => À
 	for c, h, d in entitysHtml2() + entitysHtml3() + entitysHtml4():
 		text = text.replace(h, c).replace(d, c);
 		#debug_print(h, d, c);
 		#&Agrave; &#192; À
 	
+	
 	regx = r'&#(\d+);';
 	while RegexSearch(regx, text):
 		m = RegexSearch(regx, text).group(1);
 		text = text.replace('&#'+m+';', chr(int(m)));
-		
 	
 	regx = r'&#x([0-9a-fA-F]+);';
 	while RegexSearch(regx, text):
 		m = RegexSearch(regx, text).group(1);
 		text = text.replace('&#x'+m+';', chr(int(m, base=16)));
-		
+	
 	
 	text = RegexLoop(r'(>[^<>]*)&quot;([^<>]*<)', r'\1"\2',text);
 	text = RegexLoop(r'(>[^<>]*)&apos;([^<>]*<)', r"\1'\2",text);
