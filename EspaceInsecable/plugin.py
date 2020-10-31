@@ -61,7 +61,7 @@ def Traitement(text):
 	body = RegexSimple(emptyPara, r'\1&#160;\3', body);
 	
 	# supprime les espace en fin de body
-	text = RegexLoop(r'(\s*<p(| [^>]*)>&#160;</p>)+(\s*</div>)?\s*</body>', r'\3\n</body>', text);
+	body = RegexLoop(r'(\s*<p(| [^>]*)>&#160;</p>)+(\s*</div>)?\s*</body>', r'\3\n</body>', body);
 	
 	#supprime les espaces insécable et balise br en fin de paragraphe (sauf si s'est le dernier)
 	body = RegexLoop(r'([^>])(?:&#160;|&#8239;|<br[^>]*/>)+(</(p|h\d)>)', r'\1\2', body);
