@@ -97,6 +97,7 @@ def CleanBasic(text):
 	# remplace les triple point invalide
 	text = RegexLoop(r'\.\s+\.\s*\.', r'…', text);
 	text = RegexLoop(r'\.\s*\.\s+\.', r'…', text);
+	text = RegexLoop(r'\.\.\.', r'…', text);
 	
 	return text;
 
