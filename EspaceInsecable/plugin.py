@@ -115,6 +115,8 @@ def Traitement(text):
 	body = RegexLoop(r'(\d)(?:\s|&#160;|&#8239;)+:(?:\s|&#160;|&#8239;)*(\d)', r'\1:\2', body);
 	# supprime les espace pour grand nombre
 	body = RegexLoop(r'(>[^<]*?\d+)\s+(\d{3,}[^<]*?<)', r'\1&#8239;\2', body);
+	# supprime les espace pour les url
+	body = RegexLoop(r'https?(&#160;|&#8239;):', r'http:', body);
 	# corrige les erreur XML
 	body = RegexLoop(r'(<(?:[^>]+)\s+(?:[^>]*))&#160;:([^>]*>)', r'\1:\2', body);
 	
