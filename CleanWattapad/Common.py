@@ -91,8 +91,9 @@ def CleanBasic(text):
 	text = RegexLoop(r' ([^"=<>]+)="\s+([^"]*)"', r' \1="\2"', text);
 	text = RegexLoop(r' ([^"=<>]+)="([^"]*)\s+"', r' \1="\2"', text);
 	
-	#strip span
+	#strip <span>
 	text = RegexLoop(r'<span\s*>((?:(?!<span).)*?)</span>', r'\1', text);
+	text = RegexLoop(r'<span\s*>((?:(?:(?!<span).)*?<span[^>]*>)(?:(?!</span).)*?</span>(?:(?!</span).)*?)</span>', r'\1', text);
 	
 	# remplace les triple point invalide
 	text = RegexLoop(r'\.\s+\.\s*\.', r'…', text);
