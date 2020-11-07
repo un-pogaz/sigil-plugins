@@ -30,14 +30,14 @@ def run(bk):
 def Traitement(text):
 	
 	#7switch
-	text = RegexLoop(r'\s*<p(| [^>]*)>[^<]*&lt;[^<]*@[^<]*&gt;</p>\s*<!--[^>]*-->', r'', text);
+	text = regex.loop(r'\s*<p(| [^>]*)>[^<]*&lt;[^<]*@[^<]*&gt;</p>\s*<!--[^>]*-->', r'', text);
 	
 	#Adobe
-	text = RegexLoop(r'\s*<meta(\s+(name="Adept.expected.resource"|content="urn:uuid:[^"]*")){1,}\s*/>', r'', text);
+	text = regex.loop(r'\s*<meta(\s+(name="Adept.expected.resource"|content="urn:uuid:[^"]*")){1,}\s*/>', r'', text);
 	
 	#Cultura
-	text = RegexLoop(r'\s*<!--[^>]*&lt;[^>]*@[^>]*&gt;[^>]*-->\s*<!--[^>]*customer[^>]*-->', r'', text);
-	text = RegexLoop(r'\s*<!--[^>]*customer[^>]*-->', r'', text);
+	text = regex.loop(r'\s*<!--[^>]*&lt;[^>]*@[^>]*&gt;[^>]*-->\s*<!--[^>]*customer[^>]*-->', r'', text);
+	text = regex.loop(r'\s*<!--[^>]*customer[^>]*-->', r'', text);
 	
 	return text;
 

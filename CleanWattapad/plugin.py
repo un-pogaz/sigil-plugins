@@ -32,15 +32,15 @@ def run(bk):
 
 def Traitement(text):
 	
-	text = RegexLoop(r"<pre>|</pre>", "", text);
-	text = RegexLoop(r"data-p-id=\"[^\"]+\"", "", text);
-	text = RegexLoop(r"( )+<p", "<p", text);
+	text = regex.loop(r"<pre>|</pre>", "", text);
+	text = regex.loop(r"data-p-id=\"[^\"]+\"", "", text);
+	text = regex.loop(r"( )+<p", "<p", text);
 	
-	text = RegexLoop(r"<span class=\"num-comment\">[^<]+</span>", "", text);
-	text = RegexLoop(r"<span class=\"comment-marker (hide-marker |)on-inline-comments-modal\">[^<]+<span[^<]+</span>[^<]+</span>", "", text);
+	text = regex.loop(r"<span class=\"num-comment\">[^<]+</span>", "", text);
+	text = regex.loop(r"<span class=\"comment-marker (hide-marker |)on-inline-comments-modal\">[^<]+<span[^<]+</span>[^<]+</span>", "", text);
 	
-	text = RegexLoop(r"( |\n)+</p", r"</p", text);
-	text = RegexLoop(r"([^>])&#160;</p", r"\1</p", text);
+	text = regex.loop(r"( |\n)+</p", r"</p", text);
+	text = regex.loop(r"([^>])&#160;</p", r"\1</p", text);
 	
 	return text;
 

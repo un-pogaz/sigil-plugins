@@ -40,27 +40,27 @@ def run(bk):
 
 def Traitement(text):
 	
-	text = RegexLoop(r"@font-face\s*\{[^\}>]*\}\s*", "", text);
+	text = regex.loop(r"@font-face\s*\{[^\}>]*\}\s*", "", text);
 	
-	text = RegexLoop(r"<ins[^>]*>(.*?)</ins>", r"\1", text);
+	text = regex.loop(r"<ins[^>]*>(.*?)</ins>", r"\1", text);
 	
-	text = RegexLoop(r"\s*xmlns:v=\"urn:schemas-microsoft-com:vml\"", "", text);
-	text = RegexLoop(r"\s*xmlns:o=\"urn:schemas-microsoft-com:office:office\"", "", text);
-	text = RegexLoop(r"\s*xmlns:w=\"urn:schemas-microsoft-com:office:word\"", "", text);
-	text = RegexLoop(r"\s*xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"", "", text);
+	text = regex.loop(r"\s*xmlns:v=\"urn:schemas-microsoft-com:vml\"", "", text);
+	text = regex.loop(r"\s*xmlns:o=\"urn:schemas-microsoft-com:office:office\"", "", text);
+	text = regex.loop(r"\s*xmlns:w=\"urn:schemas-microsoft-com:office:word\"", "", text);
+	text = regex.loop(r"\s*xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"", "", text);
 	
-	text = RegexLoop(r"\s(v|o|w|m):[^=>]*=\"[^\">]*\"", "", text);
+	text = regex.loop(r"\s(v|o|w|m):[^=>]*=\"[^\">]*\"", "", text);
 	
-	text = RegexLoop(r"\s*<!--\s*\[if[^\]>]*\]>.*?<!\[endif\]\s*-->", "", text);
-	text = RegexLoop(r"\s*<!--\s*\[if !(vml|supportAnnotations|supportLineBreakNewLine|supportFootnotes)\]\s*-->", "", text);
+	text = regex.loop(r"\s*<!--\s*\[if[^\]>]*\]>.*?<!\[endif\]\s*-->", "", text);
+	text = regex.loop(r"\s*<!--\s*\[if !(vml|supportAnnotations|supportLineBreakNewLine|supportFootnotes)\]\s*-->", "", text);
 	
-	text = RegexLoop(r"\s(vlink|link)=\"[^\">]*\"", "", text);
+	text = regex.loop(r"\s(vlink|link)=\"[^\">]*\"", "", text);
 	
-	text = RegexLoop(r"\s*<meta( (content=\"Word.Document\"|name=\"ProgId\")){2}/>", "", text);
+	text = regex.loop(r"\s*<meta( (content=\"Word.Document\"|name=\"ProgId\")){2}/>", "", text);
 	
-	text = RegexLoop(r"\s*<meta( (content=\"Microsoft Word[^\"]*\"|name=\"(Generator|Originator)\")){2}/>", "", text);
+	text = regex.loop(r"\s*<meta( (content=\"Microsoft Word[^\"]*\"|name=\"(Generator|Originator)\")){2}/>", "", text);
 	
-	text = RegexLoop(r"\s*<link( (href=\"[^\"]+.(xml|mso|thmx)\"|rel=\"(File-List|Edit-Time-Data|themeData|colorSchemeMapping)\")){2}/>", "", text);
+	text = regex.loop(r"\s*<link( (href=\"[^\"]+.(xml|mso|thmx)\"|rel=\"(File-List|Edit-Time-Data|themeData|colorSchemeMapping)\")){2}/>", "", text);
 	
 	return text;
 
