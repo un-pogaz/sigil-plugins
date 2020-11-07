@@ -2,43 +2,75 @@
 # -*- coding: utf-8 -*-
 import sys, os, re
 
-# from Common import *
+# Simple Regex
+class regex():
+	
+	# import the Python regex flag
+	locals().update(re.RegexFlag.__members__);
+	
+	flag = MULTILINE + DOTALL;
+	
+	try:
+		flag = ASCII + MULTILINE + re.DOTALL;
+	except :
+		flag = MULTILINE + DOTALL;
+		pass; # calibre 5 // re.ASCII for Python3 only
+	
+	
+	def match(pattern, string, f=flag):
+		return re.fullmatch(pattern, string, f);
+	
+	def search(pattern, string, f=flag):
+		return re.search(pattern, string, f);
+	
+	def searchall(pattern, string, f=flag):
+		return re.finditer(pattern, string, f);
+	
+	def split(pattern, string, maxsplit=0, f=flag):
+		return re.split(pattern, string, maxsplit, f);
+	
+	def simple(pattern, repl, string, f=flag):
+		return re.sub(pattern, repl, string, 0, f);
+	
+	def loop(pattern, repl, string, f=flag):
+		i = 0;
+		while regex.search(pattern, string, f):
+			if i > 1000000:
+				raise regexException('the pattern and substitution string caused an infinite loop', pattern, repl);
+			string = regex.simple(pattern, repl, string, f);
+			i+=1;
+			
+		return string;
+
+class regexException(BaseException):
+	def __init__(self, msg, pattern=None, repl=None):
+		self.pattern = pattern;
+		self.repl = repl;
+		self.msg = msg;
+		self.name = 'RegeError:'
+	
+	def __str__(self):
+		return self.msg;
 
 ##
 ## Common
 ##
-reFlag = re.ASCII + re.MULTILINE + re.DOTALL;
-
-def RegexSimple(pattern, repl, string):
-	return re.sub(pattern, repl, string, 0, reFlag);
-
-def RegexSearch(pattern, string):
-	return re.search(pattern, string, reFlag);
-
-def RegexLoop(pattern, repl, string):
-	
-	while RegexSearch(pattern, string):
-		string = RegexSimple(pattern, repl, string);
-	
-	return string;
-
-
 def CleanBasic(text):
 	
-	text = RegexLoop(r'\s+</(p|h\d)', r'</\1', text);
-	text = RegexLoop(r"><(p|div|h\d|li|ul|ol|blockquote)", r">\n<\1", text);
+	text = regex.loop(r'\s+</(p|h\d)', r'</\1', text);
+	text = regex.loop(r"><(p|div|h\d|li|ul|ol|blockquote)", r">\n<\1", text);
 	
 	# line
 	text = text.replace("\r\n", "\n").replace("\r", "\n");
-	text = RegexLoop(r"( |\t|\n\n)+\n", "\n", text);
+	text = regex.loop(r"( |\t|\n\n)+\n", "\n", text);
 	
 	# entity
 	text = parseXMLentity(text);
 	
 	# xml format
-	text = RegexLoop(r"<([^<>]+)\s{2,}([^<>]+)>", r"<\1 \2>", text);
-	text = RegexLoop(r"\s+(|/|\?)\s*>", r"\1>", text);
-	text = RegexLoop(r"<\s*(|/|!|\?)\s+", r"<\1", text);
+	text = regex.loop(r"<([^<>]+)\s{2,}([^<>]+)>", r"<\1 \2>", text);
+	text = regex.loop(r"\s+(|/|\?)\s*>", r"\1>", text);
+	text = regex.loop(r"<\s*(|/|!|\?)\s+", r"<\1", text);
 	
 	text = RegexSimple(r"(&#160;|\s)+</body>", r"\n</body>", text);
 	
@@ -52,53 +84,53 @@ def CleanBasic(text):
 	fusionSpace = r"</(i|b|em|strong|sup|sub)>\s+<\1(| [^>]*)>";
 	fusionEmpty = r"</(i|b|em|strong|sup|sub)><\1(| [^>]*)>";
 	
-	while (RegexSearch(inlineSpace, text) or
-		RegexSearch(inlineEmpty, text) or
-		RegexSearch(sameSpace, text) or
-		RegexSearch(sameEmpty, text) or
-		RegexSearch(fusionSpace, text) or
-		RegexSearch(fusionEmpty, text)):
+	while (regex.search(inlineSpace, text) or
+		regex.search(inlineEmpty, text) or
+		regex.search(sameSpace, text) or
+		regex.search(sameEmpty, text) or
+		regex.search(fusionSpace, text) or
+		regex.search(fusionEmpty, text)):
 		
-		text = RegexLoop(inlineSpace, r' ', text);
-		text = RegexLoop(inlineEmpty, r'', text);
+		text = regex.loop(inlineSpace, r' ', text);
+		text = regex.loop(inlineEmpty, r'', text);
 		
-		text = RegexLoop(sameSpace, r'<\1\2>\3  ', text);
-		text = RegexLoop(sameEmpty, r'<\1\2>\3', text);
+		text = regex.loop(sameSpace, r'<\1\2>\3  ', text);
+		text = regex.loop(sameEmpty, r'<\1\2>\3', text);
 		
-		text = RegexLoop(fusionSpace, r" ", text);
-		text = RegexLoop(fusionEmpty, r"", text);
+		text = regex.loop(fusionSpace, r" ", text);
+		text = regex.loop(fusionEmpty, r"", text);
 	
 	# space inline
-	text = RegexLoop(r'\s+(<(i|b|em|strong|sup|sub|u|s|del|span|a)(| [^>]*)>)\s+', r' \1', text);
-	text = RegexLoop(r'\s+(</(i|b|em|strong|sup|sub|u|s|del|span|a)>)\s+', r'\1 ', text);
+	text = regex.loop(r'\s+(<(i|b|em|strong|sup|sub|u|s|del|span|a)(| [^>]*)>)\s+', r' \1', text);
+	text = regex.loop(r'\s+(</(i|b|em|strong|sup|sub|u|s|del|span|a)>)\s+', r'\1 ', text);
 	
 	# double espace et tab dans paragraphe
-	text = RegexLoop(r'(<(p|h\d)(| [^>]*)>(?:(?!</\2).)*?)(\t| {2,})', r'\1 ', text);
+	text = regex.loop(r'(<(p|h\d)(| [^>]*)>(?:(?!</\2).)*?)(\t| {2,})', r'\1 ', text);
 	# tab pour l'indentation
-	text = RegexLoop(r"^( *)\t(\s*<)", r"\1  \2", text);
+	text = regex.loop(r"^( *)\t(\s*<)", r"\1  \2", text);
 	
 	
 	# style: del double ;
-	text = RegexLoop(r' style="([^"]*);\s+;([^"]*)"', r' style="\1;\2"', text);
+	text = regex.loop(r' style="([^"]*);\s+;([^"]*)"', r' style="\1;\2"', text);
 	# style: clean space before : ;
-	text = RegexLoop(r' style="([^"]*)\s+(;|:)([^"]*)"', r' style="\1\2\3"', text);
+	text = regex.loop(r' style="([^"]*)\s+(;|:)([^"]*)"', r' style="\1\2\3"', text);
 	# style: clean space after : ;
-	text = RegexLoop(r' style="([^"]*(?:;|:))\s{2,}([^"]*)"', r' style="\1 \2"', text);
+	text = regex.loop(r' style="([^"]*(?:;|:))\s{2,}([^"]*)"', r' style="\1 \2"', text);
 	# style: insert space after : ;
-	text = RegexLoop(r' style="([^"]*(?:;|:))([^ "])', r' style="\1 \2', text);
+	text = regex.loop(r' style="([^"]*(?:;|:))([^ "])', r' style="\1 \2', text);
 	
 	# clean space in attribut
-	text = RegexLoop(r' ([^"=<>]+)="\s+([^"]*)"', r' \1="\2"', text);
-	text = RegexLoop(r' ([^"=<>]+)="([^"]*)\s+"', r' \1="\2"', text);
+	text = regex.loop(r' ([^"=<>]+)="\s+([^"]*)"', r' \1="\2"', text);
+	text = regex.loop(r' ([^"=<>]+)="([^"]*)\s+"', r' \1="\2"', text);
 	
 	#strip <span>
-	text = RegexLoop(r'<span\s*>(((?!<span).)*?)</span>', r'\1', text);
-	text = RegexLoop(r'<span\s*>(((?!<span).)*?(<span[^>]*>((?!</?span).)*?</span>((?!</?span).)*?)+)</span>', r'\1', text);
+	text = regex.loop(r'<span\s*>(((?!<span).)*?)</span>', r'\1', text);
+	text = regex.loop(r'<span\s*>(((?!<span).)*?(<span[^>]*>((?!</?span).)*?</span>((?!</?span).)*?)+)</span>', r'\1', text);
 	
 	# remplace les triple point invalide
-	text = RegexLoop(r'\.\s+\.\s*\.', r'…', text);
-	text = RegexLoop(r'\.\s*\.\s+\.', r'…', text);
-	text = RegexLoop(r'\.\.\.', r'…', text);
+	text = regex.loop(r'\.\s+\.\s*\.', r'…', text);
+	text = regex.loop(r'\.\s*\.\s+\.', r'…', text);
+	text = regex.loop(r'\.\.\.', r'…', text);
 	
 	return text;
 
@@ -107,8 +139,8 @@ def parseXMLentity(text):
 	
 	#	" & ' < >
 	regx = r'&#x(0022|0026|0027|003C|003E);';
-	while RegexSearch(regx, text):
-		m = RegexSearch(regx, text).group(1);
+	while regex.search(regx, text):
+		m = regex.search(regx, text).group(1);
 		text = text.replace('&#x'+m+';', '&#'+str(int(m, base=16))+';')
 	
 	#	&#38; => &amp;
@@ -125,20 +157,20 @@ def parseXMLentity(text):
 	
 	
 	regx = r'&#(\d+);';
-	while RegexSearch(regx, text):
-		m = RegexSearch(regx, text).group(1);
+	while regex.search(regx, text):
+		m = regex.search(regx, text).group(1);
 		text = text.replace('&#'+m+';', chr(int(m)));
 	
 	regx = r'&#x([0-9a-fA-F]+);';
-	while RegexSearch(regx, text):
-		m = RegexSearch(regx, text).group(1);
+	while regex.search(regx, text):
+		m = regex.search(regx, text).group(1);
 		text = text.replace('&#x'+m+';', chr(int(m, base=16)));
 	
 	
-	text = RegexLoop(r'(>[^<>]*)&quot;([^<>]*<)', r'\1"\2',text);
-	text = RegexLoop(r'(>[^<>]*)&apos;([^<>]*<)', r"\1'\2",text);
+	text = regex.loop(r'(>[^<>]*)&quot;([^<>]*<)', r'\1"\2',text);
+	text = regex.loop(r'(>[^<>]*)&apos;([^<>]*<)', r"\1'\2",text);
 	
-	text = RegexLoop(r'(<[^<>]*="[^"]*)&apos;([^"]*"[^<>]*>)', r"\1'\2",text);
+	text = regex.loop(r'(<[^<>]*="[^"]*)&apos;([^"]*"[^<>]*>)', r"\1'\2",text);
 	
 	text = text.replace('\u00A0', '&#160;');
 	
