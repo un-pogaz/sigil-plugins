@@ -72,7 +72,7 @@ def CleanBasic(text):
 	text = regex.loop(r"\s+(|/|\?)\s*>", r"\1>", text);
 	text = regex.loop(r"<\s*(|/|!|\?)\s+", r"<\1", text);
 	
-	text = RegexSimple(r"(&#160;|\s)+</body>", r"\n</body>", text);
+	text = regex.simple(r"(&#160;|\s)+</body>", r"\n</body>", text);
 	
 	# inline empty 
 	inlineSpace = r'<(i|b|em|strong|sup|sub|span)(| [^>]*)>\s+</\1>';
