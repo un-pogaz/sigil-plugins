@@ -10,12 +10,19 @@ class regex():
 	
 	flag = MULTILINE + DOTALL;
 	
-	try:
-		flag = ASCII + MULTILINE + re.DOTALL;
-	except :
-		flag = MULTILINE + DOTALL;
-		pass; # calibre 5 // re.ASCII for Python3 only
-	
+		#	re.A
+		#	re.ASCII
+		#	re.DEBUG
+		#	re.I
+		#	re.IGNORECASE
+		#	re.L
+		#	re.LOCALE
+		#	re.M
+		#	re.MULTILINE
+		#	re.S
+		#	re.DOTALL
+		#	re.X
+		#	re.VERBOSE
 	
 	def match(pattern, string, f=flag):
 		return re.fullmatch(pattern, string, f);
