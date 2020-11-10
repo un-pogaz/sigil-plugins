@@ -8,7 +8,7 @@ class regex():
 	# import the Python regex flag
 	locals().update(re.RegexFlag.__members__);
 	
-	flag = MULTILINE + DOTALL;
+	flag = ASCII + MULTILINE + DOTALL;
 	
 		#	re.A
 		#	re.ASCII
@@ -31,7 +31,10 @@ class regex():
 		return re.search(pattern, string, f);
 	
 	def searchall(pattern, string, f=flag):
-		return re.finditer(pattern, string, f);
+		if regex.search(pattern, string, f):
+			return re.finditer(pattern, string, f);
+		else:
+			return None;
 	
 	def split(pattern, string, maxsplit=0, f=flag):
 		return re.split(pattern, string, maxsplit, f);
@@ -42,7 +45,7 @@ class regex():
 	def loop(pattern, repl, string, f=flag):
 		i = 0;
 		while regex.search(pattern, string, f):
-			if i > 1000000:
+			if i > 1000:
 				raise regexException('the pattern and substitution string caused an infinite loop', pattern, repl);
 			string = regex.simple(pattern, repl, string, f);
 			i+=1;
