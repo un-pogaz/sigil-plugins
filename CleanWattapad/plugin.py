@@ -40,7 +40,8 @@ def Traitement(text):
 	text = regex.loop(r"<span class=\"comment-marker (hide-marker |)on-inline-comments-modal\">[^<]+<span[^<]+</span>[^<]+</span>", "", text);
 	
 	text = regex.loop(r"( |\n)+</p", r"</p", text);
-	text = regex.loop(r"([^>])&#160;</p", r"\1</p", text);
+	text = regex.loop(r"([^>])&#160;\s*</p", r"\1</p", text);
+	text = regex.loop(r"<br>", r"<br/>", text);
 	
 	return text;
 
