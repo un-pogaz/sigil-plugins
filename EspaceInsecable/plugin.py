@@ -68,6 +68,8 @@ def Traitement(text):
 	body = regex.loop(r'(?:(</(?:i|b|em|strong|span)>)(?:&#160;|&#8239;)+|<br[^>]*/>)+(</(p|h\d)>)', r'\1\2', body);
 	
 	# remplace les tiret cadratin invalide
+	body = regex.simple(r'<p(| [^>]*)>(?:\s|&#160;|&#8239;)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
 	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
 	body = regex.loop(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
 	# supprime les espace en doubles
