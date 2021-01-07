@@ -49,16 +49,19 @@ def Traitement(text):
 	body = regex.loop(r'(<(p|h\d)(?:| [^>]*)>(?:.(?!</\2>))*?)(?:\s{2,}|\t)', r'\1 ', body);
 	
 	# supprime l'espace insécable en fin de paragraphe
-	body = regex.loop(r'(?:\s|&#160;|&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;|&#8239;)+</p>', r'\1</p>', body);
-	body = regex.loop(r'(?:\s|&#160;|&#8239;)+((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;|&#8239;)*</p>', r'\1</p>', body);
+	body = regex.loop(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)+</p>', r'\1</p>', body);
+	body = regex.loop(r'(?:\s|&#160;| |&#8239;)+((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*</p>', r'\1</p>', body);
 	
 	# supprime les espaces insécable en début de paragraphe
-	emptyPara = r'(<(p|h\d)(?:| [^>]*)>)(?:(?:\s|&#160;|&#8239;|<br[^>]*/>){2,}(?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*(?:\s|&#160;|&#8239;|<br[^>]*/>){2,}(?:</(?:i|b|em|strong|span)>)*(?:\s|&#160;|&#8239;|<br[^>]*/>){2,})';
+	emptyPara = r'(<(p|h\d)(?:| [^>]*)>)(?:(?:\s|&#160;| |&#8239;|<br[^>]*/>){2,}(?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*(?:\s|&#160;| |&#8239;|<br[^>]*/>){2,}(?:</(?:i|b|em|strong|span)>)*(?:\s|&#160;| |&#8239;|<br[^>]*/>){2,})';
 	body = regex.simple(emptyPara, r'\1', body);
 	
 	# remplace les paragraphe de br et d'espaces insécable
-	emptyPara = r'(<(p|h\d)(?:| [^>]*)>)(?:(?:\s|&#160;|&#8239;|<br[^>]*/>)*(?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*(?:\s|&#160;|&#8239;|<br[^>]*/>)*(?:</(?:i|b|em|strong|span)>)*(?:\s|&#160;|&#8239;|<br[^>]*/>)*)*(</\2>)';
+	emptyPara = r'(<(p|h\d)(?:| [^>]*)>)(?:(?:\s|&#160;| |&#8239;|<br[^>]*/>)*(?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*(?:\s|&#160;| |&#8239;|<br[^>]*/>)*(?:</(?:i|b|em|strong|span)>)*(?:\s|&#160;| |&#8239;|<br[^>]*/>)*)*(</\2>)';
 	body = regex.simple(emptyPara, r'\1&#160;\3', body);
+	
+	# supprime les div en fin de body
+	body = regex.loop(r'(\s*<div([^>]*)>\s*</div>)+(\s*</div>)?\s*</body>', r'\3\n</body>', body);
 	
 	# supprime les espace en fin de body
 	body = regex.loop(r'(\s*<p(| [^>]*)>&#160;</p>)+(\s*</div>)?\s*</body>', r'\3\n</body>', body);
@@ -68,16 +71,16 @@ def Traitement(text):
 	body = regex.loop(r'(?:(</(?:i|b|em|strong|span)>)(?:&#160;|&#8239;)+|<br[^>]*/>)+(</(p|h\d)>)', r'\1\2', body);
 	
 	# remplace les tiret cadratin invalide
-	body = regex.simple(r'<p(| [^>]*)>(?:\s|&#160;|&#8239;)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
-	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
-	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
-	body = regex.loop(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.simple(r'<p(| [^>]*)>(?:\s|&#160;| |&#8239;)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|—|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.loop(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:–|-|_|~||⎯)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){0,}', r'<p\1>\2—&#160;\3', body);
 	# supprime les espace en doubles
-	body = regex.loop(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)—((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){2,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.loop(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)—((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){2,}', r'<p\1>\2—&#160;\3', body);
 	# supprime les espace en doubles
-	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)—((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){1,}', r'<p\1>\2—&#160;\3', body);
+	body = regex.simple(r'<p(| [^>]*)>((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)—((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){1,}', r'<p\1>\2—&#160;\3', body);
 	# supprime les espace en doubles mal placé
-	body = regex.loop(r'<p(| [^>]*)>—(?:&#160;|&#8239;)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;){1,}', r'<p\1>—&#160;\2', body);
+	body = regex.loop(r'<p(| [^>]*)>—(?:&#160;|&#8239;)((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;){1,}', r'<p\1>—&#160;\2', body);
 	
 	
 	# remplace les apostrophes droit dans le texte
@@ -87,34 +90,34 @@ def Traitement(text):
 	
 	
 	# met l'espace insécable pour les quillement ouvrant
-	body = regex.simple(r'«(?:\s|&#160;|&#8239;)*((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;|&#8239;)*', r'«&#8239;\1', body);
+	body = regex.simple(r'«(?:\s|&#160;| |&#8239;)*((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;)*', r'«&#8239;\1', body);
 	# met l'espace insécable pour les quillement ouvrant
-	body = regex.simple(r'(?:\s|&#160;|&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;|&#8239;)*»', r'\1&#8239;»', body);
+	body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*»', r'\1&#8239;»', body);
 	
 	# supprime les espace en doubles mal placé
-	body = regex.simple(r'<p(| [^>]*)>(?:\s|&#160;|&#8239;){0,}»(?:\s|&#160;){0,}', r'<p\1>»&#160;', body);
+	body = regex.simple(r'<p(| [^>]*)>(?:\s|&#160;| |&#8239;){0,}»(?:\s|&#160;){0,}', r'<p\1>»&#160;', body);
 	
 	
 	# met l'espace insécable pour les point d'exclamation
-	body = regex.simple(r'(?:\s|&#160;|&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;|&#8239;)*!((?:</(?:i|b|em|strong|span)>)*)', r'\1&#8239;!\2', body);
+	body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*!((?:</(?:i|b|em|strong|span)>)*)', r'\1&#8239;!\2', body);
 	# corrige les erreur XML
 	body = regex.simple(r'<(&#160;|&#8239;)+!', r'<!', body)
 	body = regex.simple(r'(&#160;|&#8239;)+!>', r'!>', body);
 	
 	
 	# met l'espace insécable pour les point d'intérogation
-	body = regex.simple(r'(?:\s|&#160;|&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;|&#8239;)*\?((?:</(?:i|b|em|strong|span)>)*)', r'\1&#8239;?\2', body);
+	body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*\?((?:</(?:i|b|em|strong|span)>)*)', r'\1&#8239;?\2', body);
 	# corrige les erreur XML
 	body = regex.simple(r'<(&#160;|&#8239;)+\?', r'<?', body)
 	body = regex.simple(r'(&#160;|&#8239;)+\?>', r'?>', body);
 	
 	# supprime les espace entre les ponctuations
-	body = regex.loop(r'(\?|!)(\s|&#160;|&#8239;)+(\?|!)', r'\1\3', body);
+	body = regex.loop(r'(\?|!)(\s|&#160;| |&#8239;)+(\?|!)', r'\1\3', body);
 	
 	# met l'espace insécable pour les deux-point
-	body = regex.simple(r'(?:\s|&#160;|&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;|&#8239;)*:((?:</(?:i|b|em|strong|span)>)*)', r'\1&#160;:\2', body);
+	body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*:((?:</(?:i|b|em|strong|span)>)*)', r'\1&#160;:\2', body);
 	# supprime les espace pour les heures
-	body = regex.loop(r'(\d)(?:\s|&#160;|&#8239;)+:(?:\s|&#160;|&#8239;)*(\d)', r'\1:\2', body);
+	body = regex.loop(r'(\d)(?:\s|&#160;| |&#8239;)+:(?:\s|&#160;| |&#8239;)*(\d)', r'\1:\2', body);
 	# supprime les espace pour grand nombre
 	body = regex.loop(r'(>[^<]*?\d+)\s+(\d{3,}[^<]*?<)', r'\1&#8239;\2', body);
 	# supprime les espace pour les url
