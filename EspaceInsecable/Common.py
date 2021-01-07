@@ -133,6 +133,9 @@ def CleanBasic(text):
 	text = regex.loop(r' ([^"=<>]+)="\s+([^"]*)"', r' \1="\2"', text);
 	text = regex.loop(r' ([^"=<>]+)="([^"]*)\s+"', r' \1="\2"', text);
 	
+	#
+	text = regex.loop(r'<a\s*>(((?!<a).)*?)</a>', r'\1', text);
+	
 	#strip <span>
 	text = regex.loop(r'<span\s*>(((?!<span).)*?)</span>', r'\1', text);
 	text = regex.loop(r'<span\s*>(((?!<span).)*?(<span[^>]*>((?!</?span).)*?</span>((?!</?span).)*?)+)</span>', r'\1', text);
