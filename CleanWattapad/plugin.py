@@ -41,7 +41,7 @@ def Traitement(text):
 	
 	text = regex.loop(r"( |\n)+</p", r"</p", text);
 	text = regex.loop(r"([^>])&#160;\s*</p", r"\1</p", text);
-	text = regex.loop(r"<br>", r"<br/>", text);
+	text = regex.loop(r"<(b|h)r([^>/]*)>", r"<\1r\2/>", text);
 	
 	return text;
 
