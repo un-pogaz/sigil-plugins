@@ -47,9 +47,10 @@ def Traitement(text):
 	text = regex.loop(r"\s*xmlns:v=\"urn:schemas-microsoft-com:vml\"", "", text);
 	text = regex.loop(r"\s*xmlns:o=\"urn:schemas-microsoft-com:office:office\"", "", text);
 	text = regex.loop(r"\s*xmlns:w=\"urn:schemas-microsoft-com:office:word\"", "", text);
+	text = regex.loop(r"\s*xmlns:x=\"urn:schemas-microsoft-com:office:excel\"", "", text);
 	text = regex.loop(r"\s*xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"", "", text);
 	
-	text = regex.loop(r"\s(v|o|w|m):[^=>]*=\"[^\">]*\"", "", text);
+	text = regex.loop(r"\s(v|o|w|m|x):[^=>]*=\"[^\">]*\"", "", text);
 	
 	text = regex.loop(r"\s*<!--\s*\[if[^\]>]*\]>.*?<!\[endif\]\s*-->", "", text);
 	text = regex.loop(r"\s*<!--\s*\[if !\w+\]\s*-->", "", text);
@@ -61,6 +62,8 @@ def Traitement(text):
 	text = regex.loop(r"\s*<meta( (content=\"Microsoft Word[^\"]*\"|name=\"(Generator|Originator)\")){2}/>", "", text);
 	
 	text = regex.loop(r"\s*<link( (href=\"[^\"]+.(xml|mso|thmx)\"|rel=\"(File-List|Edit-Time-Data|themeData|colorSchemeMapping)\")){2}/>", "", text);
+	
+	text = regex.loop(r"\s+lang=\"\w{2}-\w{2}\"", "", text);
 	
 	return text;
 
