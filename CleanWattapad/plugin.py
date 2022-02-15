@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys, os, re
 
-from Common import *
+from common import *
 
 # main routine
 def run(bk):
