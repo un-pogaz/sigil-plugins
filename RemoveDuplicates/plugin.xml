@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+<name>RemoveDuplicates</name>
+<type>edit</type>
+<author>un_pogaz</author>
+<description>Generate a new UUID for the ePub</description>
+<engine>python3.4</engine>
+<version>1.0.0</version>
+<oslist>unx,win,osx</oslist>
+<autostart>true</autostart>
+<autoclose>true</autoclose>
+</plugin>
