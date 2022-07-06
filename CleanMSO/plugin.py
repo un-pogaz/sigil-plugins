@@ -63,7 +63,7 @@ def Traitement(text):
     
     text = regex.loop(r"\s*<link( (href=\"[^\"]+.(xml|mso|thmx)\"|rel=\"(File-List|Edit-Time-Data|themeData|colorSchemeMapping)\")){2}/>", "", text)
     
-    text = regex.loop(r"\s+lang=\"\w{2}-\w{2}\"", "", text)
+    text = regex.loop(r"\s+lang=\"\w{2}(-\w{2})?\"", "", text)
     
     return text
 
