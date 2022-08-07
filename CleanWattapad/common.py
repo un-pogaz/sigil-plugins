@@ -2387,4 +2387,3 @@ for k,v in html.entities.html5.items():
             print(f"XmlHtmlEntityBuild1('{k}', {c}),             # {v}")
         else:
             print(f"XmlHtmlEntity('{v}', '{k}', '&{k};', None, None),    # {v}")
-                                                                                                                            
