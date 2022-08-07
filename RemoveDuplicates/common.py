@@ -148,26 +148,32 @@ def CleanBasic(text):
     return text
 
 
+from collections import namedtuple
+XmlHtmlEntity = namedtuple('XmlHtmlEntity', ['char','name','html','xml','codepoint'])
+
+def XmlHtmlEntityBuild1(name, codepoint):
+    return XmlHtmlEntity(chr(codepoint), name, '&'+name+';', '&#'+str(codepoint)+';', codepoint)
+
+def XmlHtmlEntityBuild2(name, char):
+    return XmlHtmlEntity(char, name, '&'+name+';', None, None)
+
+
 def parseXMLentity(text):
-    
     # " & ' < >
-    regx = r'&#x(0022|0026|0027|003C|003E);'
+    regx = r'&#x0*(22|26|27|3C|3E);'
     while regex.search(regx, text):
         m = regex.search(regx, text).group(1)
         text = text.replace('&#x'+m+';', '&#'+str(int(m, base=16))+';')
     
     # &#38; => &amp
-    for c, h, d in entitysHtmlBase() + entitysHtmlQuot() + entitysHtmlApos():
-        text = text.replace(d, h)
-        #debug_print(h, d, c)
-        # &amp; &#38; &
+    for e in Entitys.HtmlBase + Entitys.HtmlQuot + Entitys.HtmlApos:
+        text = text.replace(e.xml, e.html)
     
     # &Agrave; &#192; => À
-    for c, h, d in entitysHtml2() + entitysHtml3() + entitysHtml4():
-        text = text.replace(h, c).replace(d, c)
-        #debug_print(h, d, c)
-        #&Agrave; &#192; À
-    
+    for e in Entitys.Html:
+        text = text.replace(e.html, e.char)
+        if e.xml:
+            text = text.replace(e.xml, e.char)
     
     regx = r'&#(\d+);'
     while regex.search(regx, text):
@@ -179,279 +185,258 @@ def parseXMLentity(text):
         m = regex.search(regx, text).group(1)
         text = text.replace('&#x'+m+';', chr(int(m, base=16)))
     
-    
     text = regex.loop(r'(>[^<>]*)&quot;([^<>]*<)', r'\1"\2',text)
     text = regex.loop(r'(>[^<>]*)&apos;([^<>]*<)', r"\1'\2",text)
     
     text = regex.loop(r'(<[^<>]*="[^"]*)&apos;([^"]*"[^<>]*>)', r"\1'\2",text)
     
-    text = text.replace('\u00A0', '&#160;')
+    text = text.replace(Entitys.nbsp.char, Entitys.nbsp.xml)
     
     return text
 
-def XmlHtmlEntity(html, deci):
+class Entitys:
+    HtmlQuot = [ XmlHtmlEntityBuild1('quot', 34), XmlHtmlEntityBuild1('QUOT', 34) ]
+    HtmlApos = [ XmlHtmlEntityBuild1('apos', 39), XmlHtmlEntityBuild1('APOS', 39) ]
+    HtmlBase = [
+        XmlHtmlEntityBuild1('amp', 38), # &
+        XmlHtmlEntityBuild1('AMP', 38), # &
+        XmlHtmlEntityBuild1('lt', 60),  # <
+        XmlHtmlEntityBuild1('LT', 60),  # <
+        XmlHtmlEntityBuild1('gt', 62),  # >
+        XmlHtmlEntityBuild1('GT', 62),  # >
+    ]
     
-    cara = chr(deci)
+    Html2 = [
+        XmlHtmlEntityBuild1('Agrave', 192), # À
+        XmlHtmlEntityBuild1('Aacute', 193), # Á
+        XmlHtmlEntityBuild1('Acirc', 194),  # Â
+        XmlHtmlEntityBuild1('Atilde', 195), # Ã
+        XmlHtmlEntityBuild1('Auml', 196),   # Ä
+        XmlHtmlEntityBuild1('Aring', 197),  # Å
+        XmlHtmlEntityBuild1('AElig', 198),  # Æ
+        XmlHtmlEntityBuild1('Ccedil', 199), # Ç
+        XmlHtmlEntityBuild1('Egrave', 200), # È
+        XmlHtmlEntityBuild1('Eacute', 201), # É
+        XmlHtmlEntityBuild1('Ecirc', 202),  # Ê
+        XmlHtmlEntityBuild1('Euml', 203),   # Ë
+        XmlHtmlEntityBuild1('Igrave', 204), # Ì
+        XmlHtmlEntityBuild1('Iacute', 205), # Í
+        XmlHtmlEntityBuild1('Icirc', 206),  # Î
+        XmlHtmlEntityBuild1('Iuml', 207),   # Ï
+        XmlHtmlEntityBuild1('ETH', 208),    # Ð
+        XmlHtmlEntityBuild1('Ntilde', 209), # Ñ
+        XmlHtmlEntityBuild1('Ograve', 210), # Ò
+        XmlHtmlEntityBuild1('Oacute', 211), # Ó
+        XmlHtmlEntityBuild1('Ocirc', 212),  # Ô
+        XmlHtmlEntityBuild1('Otilde', 213), # Õ
+        XmlHtmlEntityBuild1('Ouml', 214),   # Ö
+        XmlHtmlEntityBuild1('Oslash', 216), # Ø
+        XmlHtmlEntityBuild1('Ugrave', 217), # Ù
+        XmlHtmlEntityBuild1('Uacute', 218), # Ú
+        XmlHtmlEntityBuild1('Ucirc', 219),  # Û
+        XmlHtmlEntityBuild1('Uuml', 220),   # Ü
+        XmlHtmlEntityBuild1('Yacute', 221), # Ý
+        
+        XmlHtmlEntityBuild1('THORN', 222),  # Þ
+        XmlHtmlEntityBuild1('szlig', 223),  # ß
+        
+        XmlHtmlEntityBuild1('agrave', 224), # à
+        XmlHtmlEntityBuild1('aacute', 225), # á
+        XmlHtmlEntityBuild1('acirc', 226),  # â
+        XmlHtmlEntityBuild1('atilde', 227), # ã
+        XmlHtmlEntityBuild1('auml', 228),   # ä
+        XmlHtmlEntityBuild1('aring', 229),  # å
+        XmlHtmlEntityBuild1('aelig', 230),  # æ
+        XmlHtmlEntityBuild1('ccedil', 231), # ç
+        XmlHtmlEntityBuild1('egrave', 232), # è
+        XmlHtmlEntityBuild1('eacute', 233), # é
+        XmlHtmlEntityBuild1('ecirc', 234),  # ê
+        XmlHtmlEntityBuild1('euml', 235),   # ë
+        XmlHtmlEntityBuild1('igrave', 236), # ì
+        XmlHtmlEntityBuild1('iacute', 237), # í
+        XmlHtmlEntityBuild1('icirc', 238),  # î
+        XmlHtmlEntityBuild1('iuml', 239),   # ï
+        XmlHtmlEntityBuild1('eth', 240),    # ð
+        XmlHtmlEntityBuild1('ntilde', 241), # ñ
+        XmlHtmlEntityBuild1('ograve', 242), # ò
+        XmlHtmlEntityBuild1('oacute', 243), # ó
+        XmlHtmlEntityBuild1('ocirc', 244),  # ô
+        XmlHtmlEntityBuild1('otilde', 245), # õ
+        XmlHtmlEntityBuild1('ouml', 246),   # ö
+        XmlHtmlEntityBuild1('oslash', 248), # ø
+        XmlHtmlEntityBuild1('ugrave', 249), # ù
+        XmlHtmlEntityBuild1('uacute', 250), # ú
+        XmlHtmlEntityBuild1('ucirc', 251),  # û
+        XmlHtmlEntityBuild1('uuml', 252),   # ü
+        XmlHtmlEntityBuild1('yacute', 253), # ý
+        
+        XmlHtmlEntityBuild1('thorn', 254),  # þ
+        XmlHtmlEntityBuild1('yuml', 255),   # ÿ
+    ]
     
-    return (cara, '&'+html+';', '&#'+str(ord(cara))+';')
-
-def entitysHtmlQuot():
-        return [
-            XmlHtmlEntity('quot', 34),
-        ]
-
-def entitysHtmlApos():
-        return [
-            XmlHtmlEntity('apos', 39),
-        ]
-
-def entitysHtmlBase():
-        return [
-            XmlHtmlEntity('amp', 38),# &
-            XmlHtmlEntity('lt', 60), # <
-            XmlHtmlEntity('gt', 62), # >
-        ]
-
-def entitysHtml2():
-        return [
-            XmlHtmlEntity('Agrave', 192),# À
-            XmlHtmlEntity('Aacute', 193),# Á
-            XmlHtmlEntity('Acirc', 194), # Â
-            XmlHtmlEntity('Atilde', 195),# Ã
-            XmlHtmlEntity('Auml', 196),  # Ä
-            XmlHtmlEntity('Aring', 197), # Å
-            XmlHtmlEntity('AElig', 198), # Æ
-            XmlHtmlEntity('Ccedil', 199),# Ç
-            XmlHtmlEntity('Egrave', 200),# È
-            XmlHtmlEntity('Eacute', 201),# É
-            XmlHtmlEntity('Ecirc', 202), # Ê
-            XmlHtmlEntity('Euml', 203),  # Ë
-            XmlHtmlEntity('Igrave', 204),# Ì
-            XmlHtmlEntity('Iacute', 205),# Í
-            XmlHtmlEntity('Icirc', 206), # Î
-            XmlHtmlEntity('Iuml', 207),  # Ï
-            XmlHtmlEntity('ETH', 208),   # Ð
-            XmlHtmlEntity('Ntilde', 209),# Ñ
-            XmlHtmlEntity('Ograve', 210),# Ò
-            XmlHtmlEntity('Oacute', 211),# Ó
-            XmlHtmlEntity('Ocirc', 212), # Ô
-            XmlHtmlEntity('Otilde', 213),# Õ
-            XmlHtmlEntity('Ouml', 214),  # Ö
-            XmlHtmlEntity('Oslash', 216),# Ø
-            XmlHtmlEntity('Ugrave', 217),# Ù
-            XmlHtmlEntity('Uacute', 218),# Ú
-            XmlHtmlEntity('Ucirc', 219), # Û
-            XmlHtmlEntity('Uuml', 220),  # Ü
-            XmlHtmlEntity('Yacute', 221),# Ý
-            
-            XmlHtmlEntity('THORN', 222), # Þ
-            XmlHtmlEntity('szlig', 223), # ß
-            
-            XmlHtmlEntity('agrave', 224),# à
-            XmlHtmlEntity('aacute', 225),# á
-            XmlHtmlEntity('acirc', 226), # â
-            XmlHtmlEntity('atilde', 227),# ã
-            XmlHtmlEntity('auml', 228),  # ä
-            XmlHtmlEntity('aring', 229), # å
-            XmlHtmlEntity('aelig', 230), # æ
-            XmlHtmlEntity('ccedil', 231),# ç
-            XmlHtmlEntity('egrave', 232),# è
-            XmlHtmlEntity('eacute', 233),# é
-            XmlHtmlEntity('ecirc', 234), # ê
-            XmlHtmlEntity('euml', 235),  # ë
-            XmlHtmlEntity('igrave', 236),# ì
-            XmlHtmlEntity('iacute', 237),# í
-            XmlHtmlEntity('icirc', 238), # î
-            XmlHtmlEntity('iuml', 239),  # ï
-            XmlHtmlEntity('eth', 240),   # ð
-            XmlHtmlEntity('ntilde', 241),# ñ
-            XmlHtmlEntity('ograve', 242),# ò
-            XmlHtmlEntity('oacute', 243),# ó
-            XmlHtmlEntity('ocirc', 244), # ô
-            XmlHtmlEntity('otilde', 245),# õ
-            XmlHtmlEntity('ouml', 246),  # ö
-            XmlHtmlEntity('oslash', 248),# ø
-            XmlHtmlEntity('ugrave', 249),# ù
-            XmlHtmlEntity('uacute', 250),# ú
-            XmlHtmlEntity('ucirc', 251), # û
-            XmlHtmlEntity('uuml', 252),  # ü
-            XmlHtmlEntity('yacute', 253),# ý
-            
-            XmlHtmlEntity('thorn', 254), # þ
-            XmlHtmlEntity('yuml', 255),  # ÿ
-        ]
-
-def entitysHtml3():
-        return [
-            XmlHtmlEntity('nbsp', 160),  #  
-            XmlHtmlEntity('iexcl', 161), # ¡
-            XmlHtmlEntity('cent', 162),  # ¢
-            XmlHtmlEntity('pound', 163), # £
-            XmlHtmlEntity('curren', 164),# ¤
-            XmlHtmlEntity('yen', 165),   # ¥
-            XmlHtmlEntity('brvbar', 166),# ¦
-            XmlHtmlEntity('sect', 167),  # §
-            XmlHtmlEntity('uml', 168),   # ¨
-            XmlHtmlEntity('copy', 169),  # ©
-            XmlHtmlEntity('ordf', 170),  # ª
-            XmlHtmlEntity('laquo', 171), # «
-            XmlHtmlEntity('not', 172),   # ¬
-            XmlHtmlEntity('shy', 173),   # ­
-            XmlHtmlEntity('reg', 174),   # ®
-            XmlHtmlEntity('macr', 175),  # ¯
-            XmlHtmlEntity('deg', 176),   # °
-            XmlHtmlEntity('plusmn', 177),# ±
-            XmlHtmlEntity('sup2', 178),  # ²
-            XmlHtmlEntity('sup3', 179),  # ³
-            XmlHtmlEntity('acute', 180), # ´
-            XmlHtmlEntity('micro', 181), # µ
-            XmlHtmlEntity('para', 182),  # ¶
-            XmlHtmlEntity('middot', 183),# ·
-            XmlHtmlEntity('cedil', 184), # ¸
-            XmlHtmlEntity('sup1', 185),  # ¹
-            XmlHtmlEntity('ordm', 186),  # º
-            XmlHtmlEntity('raquo', 187), # »
-            XmlHtmlEntity('frac14', 188),# ¼
-            XmlHtmlEntity('frac12', 189),# ½
-            XmlHtmlEntity('frac34', 190),# ¾
-            XmlHtmlEntity('iquest', 191),# ¿
-            
-            XmlHtmlEntity('times', 215), # ×
-            
-            XmlHtmlEntity('divide', 247),# ÷
-        ]
-
-def entitysHtml4():
-        return [
-            XmlHtmlEntity('OElig', 338),   # Œ
-            XmlHtmlEntity('oelig', 339),   # œ
-            
-            XmlHtmlEntity('Scaron', 352),  # Š
-            XmlHtmlEntity('scaron', 353),  # š
-            
-            XmlHtmlEntity('Yuml', 376),    # Ÿ
-            
-            XmlHtmlEntity('fnof', 402),    # ƒ
-            
-            XmlHtmlEntity('circ', 710),    # ˆ
-            
-            XmlHtmlEntity('tilde', 732),   # ˜
-            
-            XmlHtmlEntity('Alpha', 913 ),  # Α
-            XmlHtmlEntity('Beta', 914 ),   # Β
-            XmlHtmlEntity('Gamma', 915 ),  # Γ
-            XmlHtmlEntity('Delta', 916 ),  # Δ
-            XmlHtmlEntity('Epsilon', 917 ),# Ε
-            XmlHtmlEntity('Zeta', 918 ),   # Ζ
-            XmlHtmlEntity('Eta', 919 ),    # Η
-            XmlHtmlEntity('Theta', 920 ),  # Θ
-            XmlHtmlEntity('Iota', 921 ),   # Ι
-            XmlHtmlEntity('Kappa', 922 ),  # Κ
-            XmlHtmlEntity('Lambda', 923 ), # Λ
-            XmlHtmlEntity('Mu', 924 ),     # Μ
-            XmlHtmlEntity('Nu', 925 ),     # Ν
-            XmlHtmlEntity('Xi', 926 ),     # Ξ
-            XmlHtmlEntity('Omicron', 927 ),# Ο
-            XmlHtmlEntity('Pi', 928 ),     # Π
-            XmlHtmlEntity('Rho', 929 ),    # Ρ
-            
-            XmlHtmlEntity('Sigma', 931 ),  # Σ
-            XmlHtmlEntity('Tau', 932 ),    # Τ
-            XmlHtmlEntity('Upsilon', 933 ),# Υ
-            XmlHtmlEntity('Phi', 934 ),    # Φ
-            XmlHtmlEntity('Chi', 935 ),    # Χ
-            XmlHtmlEntity('Psi', 936 ),    # Ψ
-            XmlHtmlEntity('Omega', 937 ),  # Ω
-            XmlHtmlEntity('ohm', 937 ),    # Ω
-            
-            XmlHtmlEntity('alpha', 945 ),  # α
-            XmlHtmlEntity('beta', 946 ),   # β
-            XmlHtmlEntity('gamma', 947 ),  # γ
-            XmlHtmlEntity('delta', 948 ),  # δ
-            XmlHtmlEntity('epsi', 949 ),   # ε
-            XmlHtmlEntity('epsilon', 949 ),# ε
-            XmlHtmlEntity('zeta', 950 ),   # ζ
-            XmlHtmlEntity('eta', 951 ),    # η
-            XmlHtmlEntity('theta', 952 ),  # θ
-            XmlHtmlEntity('iota', 953 ),   # ι
-            XmlHtmlEntity('kappa', 954 ),  # κ
-            XmlHtmlEntity('lambda', 955 ), # λ
-            XmlHtmlEntity('mu', 956 ),     # μ
-            XmlHtmlEntity('nu', 957 ),     # ν
-            XmlHtmlEntity('xi', 958 ),     # ξ
-            XmlHtmlEntity('omicron', 959 ),# ο
-            XmlHtmlEntity('pi', 960 ),     # π
-            XmlHtmlEntity('rho', 961 ),    # ρ
-            XmlHtmlEntity('sigmav', 962 ), # ς
-            XmlHtmlEntity('sigmaf', 962 ), # ς
-            XmlHtmlEntity('sigma', 963 ),  # σ
-            XmlHtmlEntity('tau', 964 ),    # τ
-            XmlHtmlEntity('upsi', 965 ),   # υ
-            XmlHtmlEntity('phi', 966 ),    # φ
-            XmlHtmlEntity('chi', 967 ),    # χ
-            XmlHtmlEntity('psi', 968 ),    # ψ
-            XmlHtmlEntity('omega', 969 ),  # ω
-            
-            XmlHtmlEntity('thetav', 977 ), # ϑ
-            XmlHtmlEntity('upsih', 978 ),  # ϒ
-            
-            XmlHtmlEntity('phiv', 981 ),   # ϕ
-            
-            XmlHtmlEntity('ensp', 8194),   #  
-            XmlHtmlEntity('emsp', 8195),   #  
-            
-            XmlHtmlEntity('thinsp', 8201), #  
-            
-            XmlHtmlEntity('zwnj', 8204),   # ‌
-            XmlHtmlEntity('zwj', 8205),    # ‍
-            XmlHtmlEntity('lrm', 8206),    # ‎
-            XmlHtmlEntity('rlm', 8207),    # ‏
-            
-            XmlHtmlEntity('ndash', 8211),  # –
-            XmlHtmlEntity('mdash', 8212),  # —
-            
-            XmlHtmlEntity('lsquo', 8216),  # ‘
-            XmlHtmlEntity('rsquo', 8217),  # ’
-            XmlHtmlEntity('rsquor', 8217), # ’
-            XmlHtmlEntity('sbquo', 8218),  # ‚
-            XmlHtmlEntity('ldquo', 8220),  # “
-            XmlHtmlEntity('rdquo', 8221 ), # ”
-            XmlHtmlEntity('bdquo', 8222),  # „
-            
-            XmlHtmlEntity('dagger', 8224), # †
-            XmlHtmlEntity('ddagger', 8225),# ‡
-            XmlHtmlEntity('bull', 8226),   # •
-            
-            XmlHtmlEntity('hellip', 8230), # …
-            
-            XmlHtmlEntity('permil', 8240), # ‰
-            
-            XmlHtmlEntity('prime', 8242),  # ′
-            XmlHtmlEntity('Prime', 8243),  # ″
-            
-            XmlHtmlEntity('lsaquo', 8249), # ‹
-            XmlHtmlEntity('rsaquo', 8250), # ›
-            
-            XmlHtmlEntity('oline', 8254),  # ‾
-            
-            XmlHtmlEntity('euro', 8364),   # €
-            
-            XmlHtmlEntity('image', 8465),  # ℑ
-            
-            XmlHtmlEntity('weierp', 8472), # ℘
-            
-            XmlHtmlEntity('real', 8476),   # ℜ
-            
-            XmlHtmlEntity('trade', 8482),  # ™
-            
-            XmlHtmlEntity('alefsym', 8501),# ℵ
-            
-            XmlHtmlEntity('rang', 10217),  # ⟩
-            XmlHtmlEntity('loz', 9674),    # ◊
-            XmlHtmlEntity('spades', 9824), # ♠
-            XmlHtmlEntity('clubs', 9827),  # ♣
-            XmlHtmlEntity('hearts', 9829), # ♥
-            XmlHtmlEntity('diams', 9830),  # ♦
-            XmlHtmlEntity('lang', 10216),  # ⟨
-            XmlHtmlEntity('rang', 10217),  # ⟩
-        ]
+    Html3 = [
+        XmlHtmlEntityBuild1('nbsp', 160),   #  
+        XmlHtmlEntityBuild1('iexcl', 161),  # ¡
+        XmlHtmlEntityBuild1('cent', 162),   # ¢
+        XmlHtmlEntityBuild1('pound', 163),  # £
+        XmlHtmlEntityBuild1('curren', 164),  # ¤
+        XmlHtmlEntityBuild1('yen', 165),    # ¥
+        XmlHtmlEntityBuild1('brvbar', 166),  # ¦
+        XmlHtmlEntityBuild1('sect', 167),   # §
+        XmlHtmlEntityBuild1('uml', 168),    # ¨
+        XmlHtmlEntityBuild1('copy', 169),   # ©
+        XmlHtmlEntityBuild1('ordf', 170),   # ª
+        XmlHtmlEntityBuild1('laquo', 171),  # «
+        XmlHtmlEntityBuild1('not', 172),    # ¬
+        XmlHtmlEntityBuild1('shy', 173),    # ­
+        XmlHtmlEntityBuild1('reg', 174),    # ®
+        XmlHtmlEntityBuild1('macr', 175),   # ¯
+        XmlHtmlEntityBuild1('deg', 176),    # °
+        XmlHtmlEntityBuild1('plusmn', 177),  # ±
+        XmlHtmlEntityBuild1('sup2', 178),   # ²
+        XmlHtmlEntityBuild1('sup3', 179),   # ³
+        XmlHtmlEntityBuild1('acute', 180),  # ´
+        XmlHtmlEntityBuild1('micro', 181),  # µ
+        XmlHtmlEntityBuild1('para', 182),   # ¶
+        XmlHtmlEntityBuild1('middot', 183),  # ·
+        XmlHtmlEntityBuild1('cedil', 184),  # ¸
+        XmlHtmlEntityBuild1('sup1', 185),   # ¹
+        XmlHtmlEntityBuild1('ordm', 186),   # º
+        XmlHtmlEntityBuild1('raquo', 187),  # »
+        XmlHtmlEntityBuild1('frac14', 188),  # ¼
+        XmlHtmlEntityBuild1('frac12', 189),  # ½
+        XmlHtmlEntityBuild1('frac34', 190),  # ¾
+        XmlHtmlEntityBuild1('iquest', 191),  # ¿
+        
+        XmlHtmlEntityBuild1('times', 215),  # ×
+        
+        XmlHtmlEntityBuild1('divide', 247), # ÷
+    ]
+    
+    Html4 = [
+        XmlHtmlEntityBuild1('OElig', 338),      # Œ
+        XmlHtmlEntityBuild1('oelig', 339),      # œ
+        
+        XmlHtmlEntityBuild1('Scaron', 352),     # Š
+        XmlHtmlEntityBuild1('scaron', 353),     # š
+        
+        XmlHtmlEntityBuild1('Yuml', 376),       # Ÿ
+        
+        XmlHtmlEntityBuild1('fnof', 402),       # ƒ
+        
+        XmlHtmlEntityBuild1('circ', 710),       # ˆ
+        
+        XmlHtmlEntityBuild1('tilde', 732),      # ˜
+        
+        XmlHtmlEntityBuild1('Alpha', 913 ),     # Α
+        XmlHtmlEntityBuild1('Beta', 914 ),      # Β
+        XmlHtmlEntityBuild1('Gamma', 915 ),     # Γ
+        XmlHtmlEntityBuild1('Delta', 916 ),     # Δ
+        XmlHtmlEntityBuild1('Epsilon', 917 ),   # Ε
+        XmlHtmlEntityBuild1('Zeta', 918 ),      # Ζ
+        XmlHtmlEntityBuild1('Eta', 919 ),       # Η
+        XmlHtmlEntityBuild1('Theta', 920 ),     # Θ
+        XmlHtmlEntityBuild1('Iota', 921 ),      # Ι
+        XmlHtmlEntityBuild1('Kappa', 922 ),     # Κ
+        XmlHtmlEntityBuild1('Lambda', 923 ),    # Λ
+        XmlHtmlEntityBuild1('Mu', 924 ),        # Μ
+        XmlHtmlEntityBuild1('Nu', 925 ),        # Ν
+        XmlHtmlEntityBuild1('Xi', 926 ),        # Ξ
+        XmlHtmlEntityBuild1('Omicron', 927 ),   # Ο
+        XmlHtmlEntityBuild1('Pi', 928 ),        # Π
+        XmlHtmlEntityBuild1('Rho', 929 ),       # Ρ
+        
+        XmlHtmlEntityBuild1('Sigma', 931 ),     # Σ
+        XmlHtmlEntityBuild1('Tau', 932 ),       # Τ
+        XmlHtmlEntityBuild1('Upsilon', 933 ),   # Υ
+        XmlHtmlEntityBuild1('Phi', 934 ),       # Φ
+        XmlHtmlEntityBuild1('Chi', 935 ),       # Χ
+        XmlHtmlEntityBuild1('Psi', 936 ),       # Ψ
+        XmlHtmlEntityBuild1('Omega', 937 ),     # Ω
+        XmlHtmlEntityBuild1('ohm', 937 ),       # Ω
+        
+        XmlHtmlEntityBuild1('alpha', 945 ),     # α
+        XmlHtmlEntityBuild1('beta', 946 ),      # β
+        XmlHtmlEntityBuild1('gamma', 947 ),     # γ
+        XmlHtmlEntityBuild1('delta', 948 ),     # δ
+        XmlHtmlEntityBuild1('epsi', 949 ),      # ε
+        XmlHtmlEntityBuild1('epsilon', 949 ),   # ε
+        XmlHtmlEntityBuild1('zeta', 950 ),      # ζ
+        XmlHtmlEntityBuild1('eta', 951 ),       # η
+        XmlHtmlEntityBuild1('theta', 952 ),     # θ
+        XmlHtmlEntityBuild1('iota', 953 ),      # ι
+        XmlHtmlEntityBuild1('kappa', 954 ),     # κ
+        XmlHtmlEntityBuild1('lambda', 955 ),    # λ
+        XmlHtmlEntityBuild1('mu', 956 ),        # μ
+        XmlHtmlEntityBuild1('nu', 957 ),        # ν
+        XmlHtmlEntityBuild1('xi', 958 ),        # ξ
+        XmlHtmlEntityBuild1('omicron', 959 ),   # ο
+        XmlHtmlEntityBuild1('pi', 960 ),        # π
+        XmlHtmlEntityBuild1('rho', 961 ),       # ρ
+        XmlHtmlEntityBuild1('sigmav', 962 ),    # ς
+        XmlHtmlEntityBuild1('sigmaf', 962 ),    # ς
+        XmlHtmlEntityBuild1('sigma', 963 ),     # σ
+        XmlHtmlEntityBuild1('tau', 964 ),       # τ
+        XmlHtmlEntityBuild1('upsi', 965 ),      # υ
+        XmlHtmlEntityBuild1('phi', 966 ),       # φ
+        XmlHtmlEntityBuild1('chi', 967 ),       # χ
+        XmlHtmlEntityBuild1('psi', 968 ),       # ψ
+        XmlHtmlEntityBuild1('omega', 969 ),     # ω
+        
+        XmlHtmlEntityBuild1('thetav', 977 ),    # ϑ
+        XmlHtmlEntityBuild1('upsih', 978 ),     # ϒ
+        
+        XmlHtmlEntityBuild1('phiv', 981 ),      # ϕ
+        
+        XmlHtmlEntityBuild1('ensp', 8194),      #  
+        XmlHtmlEntityBuild1('emsp', 8195),      #  
+        
+        XmlHtmlEntityBuild1('thinsp', 8201),    #  
+        
+        XmlHtmlEntityBuild1('zwnj', 8204),      # ‌
+        XmlHtmlEntityBuild1('zwj', 8205),       # ‍
+        XmlHtmlEntityBuild1('lrm', 8206),       # ‎
+        XmlHtmlEntityBuild1('rlm', 8207),       # ‏
+        
+        XmlHtmlEntityBuild1('ndash', 8211),     # –
+        XmlHtmlEntityBuild1('mdash', 8212),     # —
+        
+        XmlHtmlEntityBuild1('lsquo', 8216),     # ‘
+        XmlHtmlEntityBuild1('rsquo', 8217),     # ’
+        XmlHtmlEntityBuild1('rsquor', 8217),    # ’
+        XmlHtmlEntityBuild1('sbquo', 8218),     # ‚
+        XmlHtmlEntityBuild1('ldquo', 8220),     # “
+        XmlHtmlEntityBuild1('rdquo', 8221 ),    # ”
+        XmlHtmlEntityBuild1('bdquo', 8222),     # „
+        
+        XmlHtmlEntityBuild1('dagger', 8224),    # †
+        XmlHtmlEntityBuild1('ddagger', 8225),   # ‡
+        XmlHtmlEntityBuild1('bull', 8226),      # •
+        
+        XmlHtmlEntityBuild1('hellip', 8230),    # …
+        
+        XmlHtmlEntityBuild1('permil', 8240),    # ‰
+        
+        XmlHtmlEntityBuild1('prime', 8242),     # ′
+        XmlHtmlEntityBuild1('Prime', 8243),     # ″
+        
+        XmlHtmlEntityBuild1('lsaquo', 8249),    # ‹
+        XmlHtmlEntityBuild1('rsaquo', 8250),    # ›
+        
+        XmlHtmlEntityBuild1('oline', 8254),     # ‾
+        
+        XmlHtmlEntityBuild1('euro', 8364),      # €
+        
+        XmlHtmlEntityBuild1('image', 8465),     # ℑ
+        
+        XmlHtmlEntityBuild1('weierp', 8472),    # ℘
+        
+        XmlHtmlEntityBuild1('real', 8476),      # ℜ
+        
+        XmlHtmlEntityBuild1('trade', 8482),     # ™
+        
+        XmlHtmlEntityBuild1('alefsym', 8501),   # ℵ
+        
+        XmlHtmlEntityBuild1('rang', 10217),     # ⟩
+        XmlHtmlEntityBuild1('loz', 9674),       # ◊
+        XmlHtmlE
