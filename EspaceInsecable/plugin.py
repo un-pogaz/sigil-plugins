@@ -20,6 +20,8 @@ def run(bk):
         
         text = CleanBasic(text)
         
+        text = text.replace('&#160;', ' ')
+        
         # write modified html code to file
         bk.writefile(html_id, text)
     

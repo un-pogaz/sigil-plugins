@@ -65,6 +65,8 @@ def Traitement(text):
     
     text = regex.loop(r'\s+lang="\w{2}(-\w{2})?"', '', text)
     
+    text = regex.loop(r"<!--?xml version='1.0' encoding='utf-8'?-->", '', text)
+    
     return text
 
 def main():
