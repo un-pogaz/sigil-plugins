@@ -36,8 +36,7 @@ def Traitement(text):
     body = regex.search(r'<body[^>]*>.*</body>', text).group(0)
     
     # espace fine insécable
-    body = regex.loop(r'&#x202F;', '&#8239;', body)
-    body = regex.loop('\u202F', '&#8239;', body)
+    body = regex.loop(r'\u202F|&#x202F;', '&#8239;', body)
     
     
     #supprimé les paragraphe vide
@@ -93,23 +92,23 @@ def Traitement(text):
     
     
     # met l'espace insécable pour les quillement ouvrant
-    body = regex.simple(r'«(?:\s|&#160;| |&#8239;)*((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;)*', r'«&#8239;\1', body)
+    body = regex.simple(r'«(?:\s|&#160;| |&#8239;)*((?:<(?:i|b|em|strong|span)(?:| [^>]*)>)*)(?:\s|&#160;| |&#8239;)*', r'«&#160;\1', body)
     # met l'espace insécable pour les quillement ouvrant
-    body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*»', r'\1&#8239;»', body)
+    body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*»', r'\1&#160;»', body)
     
     # supprime les espace en doubles mal placé
     body = regex.simple(r'<p(| [^>]*)>(?:\s|&#160;| |&#8239;){0,}»(?:\s|&#160;){0,}', r'<p\1>»&#160;', body)
     
     
     # met l'espace insécable pour les point d'exclamation
-    body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*!((?:</(?:i|b|em|strong|span)>)*)', r'\1&#8239;!\2', body)
+    body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*!((?:</(?:i|b|em|strong|span)>)*)', r'\1&#160;!\2', body)
     # corrige les erreur XML
     body = regex.simple(r'<(&#160;|&#8239;)+!', r'<!', body)
     body = regex.simple(r'(&#160;|&#8239;)+!>', r'!>', body)
     
     
     # met l'espace insécable pour les point d'intérogation
-    body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*\?((?:</(?:i|b|em|strong|span)>)*)', r'\1&#8239;?\2', body)
+    body = regex.simple(r'(?:\s|&#160;| |&#8239;)*((?:</(?:i|b|em|strong|span)>)*)(?:\s|&#160;| |&#8239;)*\?((?:</(?:i|b|em|strong|span)>)*)', r'\1&#160;?\2', body)
     # corrige les erreur XML
     body = regex.simple(r'<(&#160;|&#8239;)+\?', r'<?', body)
     body = regex.simple(r'(&#160;|&#8239;)+\?>', r'?>', body)
@@ -130,7 +129,7 @@ def Traitement(text):
     
     # espace insécable pour les point-virgule
     body = regex.simple('&([^\\s;\b]*);', '&\\1\b', body); #échapement des entités
-    body = regex.simple('(&#160\b|&#8239\b|\\s){0,};', '&#8239\b;', body); #met l'espace insécable pour les point-virgule et supprime les espace en doubles
+    body = regex.simple('(&#160\b|&#8239\b|\\s){0,};', '&#160\b;', body); #met l'espace insécable pour les point-virgule et supprime les espace en doubles
     body = regex.simple('&([^\\s;\b]*)\b', '&\\1;', body); #rétablit les entités
     # corrige les erreur XML
     body = regex.loop(r'(<(?:[^>]+)\s+(?:[^>]*))&#8239;;([^>]*>)', r'\1;\2', body)
@@ -142,8 +141,8 @@ def Traitement(text):
 
 
 def main():
-    print("I reached main when I should not have\n")
+    print('I reached main when I should not have\n')
     return -1
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

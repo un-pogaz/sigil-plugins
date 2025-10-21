@@ -47,18 +47,18 @@ def launch_gui(bk, prefs):
 def dark_palette(bk, app):
     if not (bk.launcher_version() >= 20200117):
         return
-    if bk.colorMode() != "dark":
+    if bk.colorMode() != 'dark':
         return
 
     p = QPalette()
     sigil_colors = bk.color
-    dark_color = QColor(sigil_colors("Window"))
+    dark_color = QColor(sigil_colors('Window'))
     disabled_color = QColor(127,127,127)
     dark_link_color = QColor(108, 180, 238)
-    text_color = QColor(sigil_colors("Text"))
+    text_color = QColor(sigil_colors('Text'))
     p.setColor(p.Window, dark_color)
     p.setColor(p.WindowText, text_color)
-    p.setColor(p.Base, QColor(sigil_colors("Base")))
+    p.setColor(p.Base, QColor(sigil_colors('Base')))
     p.setColor(p.AlternateBase, dark_color)
     p.setColor(p.ToolTipBase, dark_color)
     p.setColor(p.ToolTipText, text_color)
@@ -69,11 +69,11 @@ def dark_palette(bk, app):
     p.setColor(p.Disabled, p.ButtonText, disabled_color)
     p.setColor(p.BrightText, Qt.red)
     p.setColor(p.Link, dark_link_color)
-    p.setColor(p.Highlight, QColor(sigil_colors("Highlight")))
-    p.setColor(p.HighlightedText, QColor(sigil_colors("HighlightedText")))
+    p.setColor(p.Highlight, QColor(sigil_colors('Highlight')))
+    p.setColor(p.HighlightedText, QColor(sigil_colors('HighlightedText')))
     p.setColor(p.Disabled, p.HighlightedText, disabled_color)
 
-    app.setStyle(QStyleFactory.create("Fusion"))
+    app.setStyle(QStyleFactory.create('Fusion'))
     app.setPalette(p)
 
 def setup_highdpi(highdpi):
@@ -263,7 +263,7 @@ class FlowLayout(QLayout):
 class ImageCheck(QWidget):
     def __init__(self, image_path, bytes):
         QWidget.__init__(self)
-        self.setStyleSheet("border: 1px solid black")
+        self.setStyleSheet('border: 1px solid black')
         
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -297,5 +297,5 @@ class ImageCheck(QWidget):
 def main():
     return -1
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

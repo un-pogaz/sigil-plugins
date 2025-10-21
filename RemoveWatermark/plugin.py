@@ -10,7 +10,7 @@ def run(bk):
     # iterate over all html files
     for html_id, href in bk.text_iter():
         
-        print("File being processed: " + os.path.basename(href))
+        print('File being processed: ' + os.path.basename(href))
         # read orignal html code from file
         text = bk.readfile(html_id)
         
@@ -20,8 +20,8 @@ def run(bk):
         bk.writefile(html_id, text)
     
     
-    print("")
-    print("Watermark removed.")
+    print('')
+    print('Watermark removed.')
     
     return 0
 
@@ -42,8 +42,8 @@ def Traitement(text):
     return text
 
 def main():
-    print("I reached main when I should not have\n")
+    print('I reached main when I should not have\n')
     return -1
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

@@ -69,7 +69,7 @@ taglist = ['span', 'div', 'p', 'i', 'em', 'b', 'strong', 'u', 'small', 'a', 'blo
 
 def tuple_version(v):
     # No aplha characters in version strings allowed here!
-    return tuple(map(int, (v.split("."))))
+    return tuple(map(int, (v.split('.'))))
 
 
 def remove_dupes(values):
@@ -91,9 +91,9 @@ def check_for_custom_icon(prefs_dir):
             return True
         else:
             return False
-    if icon_check(os.path.join(prefs_dir, "plugin.svg")):
+    if icon_check(os.path.join(prefs_dir, 'plugin.svg')):
         return True
-    elif icon_check(os.path.join(prefs_dir, "plugin.png")):
+    elif icon_check(os.path.join(prefs_dir, 'plugin.png')):
         return True
     else:
         return False
@@ -121,10 +121,10 @@ def get_icon_color(svg):
         return None
 
 def valid_attributes(tattr):
-    ''' This is not going to catch every, single way a user can screw this up, but
+    """ This is not going to catch every, single way a user can screw this up, but
     it's going to ensure that they can't enter an attribute string that's going to:
     a) hang the attribute parser
-    b) make the xhmtl invalid '''
+    b) make the xhmtl invalid """
 
     # Make a fake xml string and try to parse the attributes of the "stuff" element
     # with lxml's objectify.
@@ -146,9 +146,9 @@ def fix_old_keys(combo_values):
 
 
 def check_for_new_prefs(prefs_group, default_values):
-    ''' Make sure that adding new tags doesn't mean that the user has
+    """ Make sure that adding new tags doesn't mean that the user has
     to delete their preferences json and start all over. Piecemeal defaults
-    instead of the wholesale approach. '''
+    instead of the wholesale approach. """
     for key, value in default_values.items():
         if key not in prefs_group:
             prefs_group[key] = value
@@ -178,17 +178,17 @@ def setupPrefs(prefs):
 
 
 def string_to_date(datestring):
-    return datetime.strptime(datestring, "%Y-%m-%d %H:%M:%S.%f")
+    return datetime.strptime(datestring, '%Y-%m-%d %H:%M:%S.%f')
 
 
 class UpdateChecker():
-    '''
+    """
     self.delta              : How often to check -- in hours
     self.url                : url to github xml file
     self.lasttimechecked    : 'stringified' datetime object of last check
     self.lastonlineversion  : version string of last online version retrieved/stored
     self.w                  : bk._w from plugin.py
-    '''
+    """
     def __init__(self, lasttimechecked, lastonlineversion, w):
         self.delta = delta
         self.url = url
@@ -234,7 +234,7 @@ class UpdateChecker():
         _version_pattern = re.compile(r'<version>([^<]*)</version>')
         _installed_version = None
 
-        ppath = os.path.join(self.w.plugin_dir, self.w.plugin_name, "plugin.xml")
+        ppath = os.path.join(self.w.plugin_dir, self.w.plugin_name, 'plugin.xml')
         with open(ppath,'rb') as f:
             data = f.read()
             data = data.decode('utf-8', 'ignore')
@@ -272,5 +272,5 @@ def main():
     print(tuple_version('0.80.3') > tuple_version('0.80.30'))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

@@ -68,21 +68,21 @@ class regexException(BaseException):
 def CleanBasic(text):
     
     text = regex.loop(r'\s+</(p|h\d)', r'</\1', text)
-    text = regex.loop(r"><(p|div|h\d|li|ul|ol|blockquote)", r">\n<\1", text)
+    text = regex.loop(r'><(p|div|h\d|li|ul|ol|blockquote)', r'>\n<\1', text)
     
     # line
-    text = text.replace("\r\n", "\n").replace("\r", "\n")
-    text = regex.loop(r"( |\t|\n\n)+\n", "\n", text)
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    text = regex.loop(r'( |\t|\n\n)+\n', '\n', text)
     
     # entity
     text = parseXMLentity(text)
     
     # xml format
-    text = regex.loop(r"<([^<>]+)\s{2,}([^<>]+)>", r"<\1 \2>", text)
-    text = regex.loop(r"\s+(|/|\?)\s*>", r"\1>", text)
-    text = regex.loop(r"<\s*(|/|!|\?)\s+", r"<\1", text)
+    text = regex.loop(r'<([^<>]+)\s{2,}([^<>]+)>', r'<\1 \2>', text)
+    text = regex.loop(r'\s+(|/|\?)\s*>', r'\1>', text)
+    text = regex.loop(r'<\s*(|/|!|\?)\s+', r'<\1', text)
     
-    text = regex.simple(r"(&#160;|\s)+</body>", r"\n</body>", text)
+    text = regex.simple(r'(&#160;|\s)+</body>', r'\n</body>', text)
     
     # inline empty 
     inlineSpace = r'<(i|b|em|strong|sup|sub|span)(| [^>]*)>\s+</\1>'
@@ -91,8 +91,8 @@ def CleanBasic(text):
     sameSpace = r'<(i|b|em|strong|sup|sub|span)(| [^>]*)>([^<]*)</\1>\s+<\1\2>'
     sameEmpty = r'<(i|b|em|strong|sup|sub|span)(| [^>]*)>([^<]*)</\1><\1\2>'
     # fusion inline 
-    fusionSpace = r"</(i|b|em|strong|sup|sub)>\s+<\1(| [^>]*)>"
-    fusionEmpty = r"</(i|b|em|strong|sup|sub)><\1(| [^>]*)>"
+    fusionSpace = r'</(i|b|em|strong|sup|sub)>\s+<\1(| [^>]*)>'
+    fusionEmpty = r'</(i|b|em|strong|sup|sub)><\1(| [^>]*)>'
     
     while (regex.search(inlineSpace, text) or
         regex.search(inlineEmpty, text) or
@@ -107,8 +107,8 @@ def CleanBasic(text):
         text = regex.loop(sameSpace, r'<\1\2>\3  ', text)
         text = regex.loop(sameEmpty, r'<\1\2>\3', text)
         
-        text = regex.loop(fusionSpace, r" ", text)
-        text = regex.loop(fusionEmpty, r"", text)
+        text = regex.loop(fusionSpace, r' ', text)
+        text = regex.loop(fusionEmpty, r'', text)
     
     # space inline
     text = regex.loop(r'\s+(<(i|b|em|strong|sup|sub|u|s|del|span|a)(| [^>]*)>)\s+', r' \1', text)
@@ -117,7 +117,7 @@ def CleanBasic(text):
     # double espace et tab dans paragraphe
     text = regex.loop(r'(<(p|h\d)(| [^>]*)>(?:(?!</\2).)*?)(\t| {2,})', r'\1 ', text)
     # tab pour l'indentation
-    text = regex.loop(r"^( *)\t(\s*<)", r"\1  \2", text)
+    text = regex.loop(r'^( *)\t(\s*<)', r'\1  \2', text)
     
     
     # style: del double 
