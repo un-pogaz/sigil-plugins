@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+<name>CleanKobo</name>
+<type>edit</type>
+<author>un_pogaz</author>
+<description>Clean Kobo</description>
+<engine>python3.4</engine>
+<version>1.0.0</version>
+<oslist>unx,win,osx</oslist>
+<autostart>true</autostart>
+<autoclose>true</autoclose>
+</plugin>
