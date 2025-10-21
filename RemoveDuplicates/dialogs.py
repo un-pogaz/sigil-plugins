@@ -10,20 +10,11 @@ import math
 
 from utilities import UpdateChecker, tuple_version, ismacos, iswindows
 
-try:
-    from PySide2.QtCore import Qt, QByteArray, QCoreApplication, QLibraryInfo, QTimer, QMargins, qVersion
-    from PySide2.QtWidgets import QAction, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox
-    from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton
-    from PySide2.QtWidgets import QStyleFactory, QTextEdit, QMainWindow, QWidget, QLayout
-    from PySide2.QtGui import QColor, QFont, QIcon, QPalette, QPixmap, QImage
-    print('Pyside2')
-except ImportError:
-    from PyQt5.QtCore import Qt, QByteArray, QCoreApplication, QLibraryInfo, QTimer, QMargins, qVersion
-    from PyQt5.QtWidgets import QAction, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox
-    from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton
-    from PyQt5.QtWidgets import QStyleFactory, QTextEdit, QMainWindow, QWidget, QLayout
-    from PyQt5.QtGui import QColor, QFont, QIcon, QPalette, QPixmap, QImage
-    print('PyQt5')
+from PySide6.QtCore import Qt, QByteArray, QCoreApplication, QLibraryInfo, QTimer, QMargins, qVersion
+from PySide6.QtWidgets import QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton
+from PySide6.QtWidgets import QStyleFactory, QTextEdit, QMainWindow, QWidget, QLayout
+from PySide6.QtGui import QAction, QColor, QFont, QIcon, QPalette, QPixmap, QImage
 
 
 def launch_gui(bk, prefs):
@@ -46,9 +37,6 @@ def launch_gui(bk, prefs):
     app = QApplication([])
     icon = os.path.join(bk._w.plugin_dir, bk._w.plugin_name, 'plugin.png')
     app.setWindowIcon(QIcon(icon))
-    
-    if tuple_version(qVersion()) >= (5, 10, 0):
-        app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
     
     # Make plugin match Sigil's light/dark theme
     dark_palette(bk, app)
@@ -122,7 +110,7 @@ class guiMain(QMainWindow):
     def setup_ui(self):
         app = QApplication.instance()
         p = app.palette()
-        link_color = p.color(p.Active, p.Link).name()
+        link_color = p.color(p.ColorGroup.Active, p.ColorRole.Link).name()
         
         layout = QVBoxLayout()
         
