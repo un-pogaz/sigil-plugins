@@ -44,18 +44,18 @@ def Traitement(text):
     
     text = regex.loop(r'<ins[^>]*>(.*?)</ins>', r'\1', text)
     
-    text = regex.loop(r'\s*xmlns:v="urn:schemas-microsoft-com:vml"', '', text)
-    text = regex.loop(r'\s*xmlns:o="urn:schemas-microsoft-com:office:office"', '', text)
-    text = regex.loop(r'\s*xmlns:w="urn:schemas-microsoft-com:office:word"', '', text)
-    text = regex.loop(r'\s*xmlns:x="urn:schemas-microsoft-com:office:excel"', '', text)
-    text = regex.loop(r'\s*xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"', '', text)
+    text = regex.loop(r'\s+xmlns:v="urn:schemas-microsoft-com:vml"', '', text)
+    text = regex.loop(r'\s+xmlns:o="urn:schemas-microsoft-com:office:office"', '', text)
+    text = regex.loop(r'\s+xmlns:w="urn:schemas-microsoft-com:office:word"', '', text)
+    text = regex.loop(r'\s+xmlns:x="urn:schemas-microsoft-com:office:excel"', '', text)
+    text = regex.loop(r'\s+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"', '', text)
     
     text = regex.loop(r'\s(v|o|w|m|x):[^=>]*="[^">]*"', '', text)
     
     text = regex.loop(r'\s*<!--\s*\[if[^\]>]*\]>.*?<!\[endif\]\s*-->', '', text)
     text = regex.loop(r'\s*<!--\s*\[if !\w+\]\s*-->', '', text)
     
-    text = regex.loop(r'\s(vlink|link)="[^">]*"', '', text)
+    text = regex.loop(r'\s+(vlink|link)="[^">]*"', '', text)
     
     text = regex.loop(r'\s*<meta( (content="Word.Document"|name="ProgId")){2}/>', '', text)
     
