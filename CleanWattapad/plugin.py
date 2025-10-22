@@ -10,7 +10,7 @@ def run(bk):
     # iterate over all html files
     for html_id, href in bk.text_iter():
         
-        print('File being processed: ' + os.path.basename(href))
+        print('File being processed:', os.path.basename(href))
         # read orignal html code from file
         text = bk.readfile(html_id)
         
