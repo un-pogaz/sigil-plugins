@@ -45,6 +45,8 @@ def Traitement(text):
     text = regex.loop(r'\s*<style[^>]*>\s*.koboSpan\s*\{\s*-webkit-text-combine:\s*inherit;\s*\}\s*</style>', '', text)
     
     text = regex.loop(r'<span\s+class="kobo[Ss]pan\d*"[^>]*>([^<]*)</span>', r'\1', text)
+    text = regex.loop(r'<span\s+class="kobo[Ss]pan\d*"[^>]*>\s*(<img[^>]*>)\s*</span>', r'\1', text)
+    text = regex.loop(r'<span\s+class="kobo[Ss]pan\d*"[^>]*>\s*(<br[^>]*>)\s*</span>', r'\1', text)
     
     text = regex.loop(r'\s+xmlns:xml="http://www\.w3\.org/XML/1998/namespace"', '', text)
     
